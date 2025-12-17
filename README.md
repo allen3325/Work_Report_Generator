@@ -15,14 +15,11 @@ A Python CLI tool that generates annual performance reports from HackMD weekly n
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/report-generator.git
+git clone https://github.com/allen3325/Work_Report_Generator.git
 cd report-generator
 
 # Install dependencies using uv (recommended)
 uv sync
-
-# Or using pip
-pip install -r requirements.txt
 ```
 
 ## Configuration
@@ -42,7 +39,7 @@ OPENAI_MODEL=gpt-4  # Required: e.g., gpt-4, gpt-4-turbo, gpt-3.5-turbo
 
 # For Google Gemini
 GEMINI_API_KEY=your_gemini_key_here
-GEMINI_MODEL=gemini-2.5-flash  # Required: e.g., gemini-2.5-flash, gemini-1.5-pro
+GEMINI_MODEL=gemini-2.5-flash  # Required: e.g., gemini-2.5-flash
 
 # For Anthropic Claude
 CLAUDE_API_KEY=your_claude_key_here
