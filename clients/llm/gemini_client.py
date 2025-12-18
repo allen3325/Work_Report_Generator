@@ -41,7 +41,7 @@ class GeminiClient(LLMClient):
 
             response = self.client.models.generate_content(
                 model=self.model,
-                # config=generate_content_config,
+                config=generate_content_config,
                 contents=prompt
             )
 
