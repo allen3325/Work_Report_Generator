@@ -37,7 +37,7 @@ class OpenAIClient(LLMClient):
                 input=prompt,
             )
 
-            return response.output[0].content[0].text.strip()
+            return response.output_text.strip()
         except openai.OpenAIError as e:
             raise Exception(f"OpenAI API call failed: {str(e)}")
 

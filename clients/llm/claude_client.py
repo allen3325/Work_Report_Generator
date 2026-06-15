@@ -35,10 +35,15 @@ class ClaudeClient(LLMClient):
             response = self.client.messages.create(
                 model=self.model,
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=1024*16,
+                thinking={"type": "adaptive"},
+                output_config={"effort": "low"},
+                max_tokens=1024 * 16,
             )
 
-            return response.content[0].text.strip()
+            text_blocks = [
+                block.text for block in response.content if block.type == "text"
+            ]
+            return "".join(text_blocks).strip()
         except anthropic.AnthropicError as e:
             raise Exception(f"Claude API call failed: {str(e)}")
 

@@ -24,6 +24,13 @@ uv sync
 
 ## Configuration
 
+Get your api key here:
+- [HackMD_API (Required)](https://hackmd.io/settings#api)
+- LLM Service(Chose One)
+- [OpenAI](https://platform.openai.com/api-keys)
+- [Gemini](https://aistudio.google.com/api-keys)
+- [Claude](https://platform.claude.com/settings/keys)
+
 Create a `.env` file in the project root:
 
 ```env
@@ -35,15 +42,15 @@ HACKMD_API_URL=https://api.hackmd.io/v1  # Optional, defaults to this
 
 # For OpenAI
 OPENAI_API_KEY=your_openai_key_here
-OPENAI_MODEL=gpt-4  # Required: e.g., gpt-4, gpt-4-turbo, gpt-3.5-turbo
+OPENAI_MODEL=gpt-5.4-mini  # Required: e.g., gpt-5.4-mini, gpt-5.5
 
 # For Google Gemini
 GEMINI_API_KEY=your_gemini_key_here
-GEMINI_MODEL=gemini-2.5-flash  # Required: e.g., gemini-2.5-flash
+GEMINI_MODEL=gemini-3.5-flash  # Required: e.g., gemini-3.5-flash
 
 # For Anthropic Claude
 CLAUDE_API_KEY=your_claude_key_here
-CLAUDE_MODEL=claude-sonnet-4-5  # Required: e.g., claude-sonnet-4-5, claude-opus-4
+CLAUDE_MODEL=claude-sonnet-4-6  # Required: e.g., claude-sonnet-4-6, claude-opus-4-8
 ```
 
 ## Usage
@@ -95,8 +102,13 @@ report_generator/
 ├── main.py                  # Main entry point
 ├── config.py                # Configuration and argument parsing
 ├── utils.py                 # Utility functions
-├── requirements.txt         # Dependencies
-├── README.md                # Documentation
+├── pyproject.toml           # Project dependencies configuration
+├── uv.lock                  # Locked package versions
+├── .env.example             # Environment variables example template
+├── test_simple_workflow.py  # Simplified end-to-end test script
+├── tests/                   # Test suite directory
+│   ├── test_config.py       # Unit tests for configuration
+│   └── test_integration.py  # Integration tests for workflow
 └── clients/
     ├── hackmd_client.py     # HackMD API client
     └── llm/
@@ -142,7 +154,7 @@ The tool handles various error scenarios:
 uv sync
 
 # Or using pip
-pip install -r requirements.txt
+pip install -e .
 
 # Run tests
 uv run pytest
