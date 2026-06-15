@@ -34,8 +34,8 @@ def parse_arguments() -> argparse.Namespace:
         "--llm-provider",
         type=str,
         required=True,
-        choices=["openai", "gemini", "claude"],
-        help="LLM service provider (openai, gemini, claude)",
+        choices=["openai", "gemini", "claude", "openai_compatible", "ollama_cloud"],
+        help="LLM service provider (openai, gemini, claude, openai_compatible, ollama_cloud)",
     )
     parser.add_argument(
         "--year-tag", type=str, required=True, help="Year tag for HackMD tags"
@@ -68,6 +68,11 @@ def validate_env(llm_provider: str) -> None:
     if not os.getenv(model_name):
         raise ValueError(f"Error: {model_name} is required for {llm_provider} provider")
 
+    # Check extra base_url for openai_compatible
+    if llm_provider == "openai_compatible":
+        if not os.getenv("OPENAI_COMPATIBLE_BASE_URL"):
+            raise ValueError("Error: OPENAI_COMPATIBLE_BASE_URL is required for openai_compatible provider")
+
 
 def get_env_vars() -> Dict[str, Any]:
     """
@@ -85,4 +90,9 @@ def get_env_vars() -> Dict[str, Any]:
         "GEMINI_MODEL": os.getenv("GEMINI_MODEL"),
         "CLAUDE_API_KEY": os.getenv("CLAUDE_API_KEY"),
         "CLAUDE_MODEL": os.getenv("CLAUDE_MODEL"),
+        "OPENAI_COMPATIBLE_API_KEY": os.getenv("OPENAI_COMPATIBLE_API_KEY"),
+        "OPENAI_COMPATIBLE_MODEL": os.getenv("OPENAI_COMPATIBLE_MODEL"),
+        "OPENAI_COMPATIBLE_BASE_URL": os.getenv("OPENAI_COMPATIBLE_BASE_URL"),
+        "OLLAMA_CLOUD_API_KEY": os.getenv("OLLAMA_CLOUD_API_KEY"),
+        "OLLAMA_CLOUD_MODEL": os.getenv("OLLAMA_CLOUD_MODEL"),
     }

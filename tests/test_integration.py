@@ -79,7 +79,7 @@ def test_main_workflow_mock():
 
         # Verify calls
         mock_hackmd.assert_called_once()
-        mock_llm_factory.assert_called_once_with(provider="openai", api_key="test_openai_key", model="gpt-4")
+        mock_llm_factory.assert_called_once_with(provider="openai", api_key="test_openai_key", model="gpt-4", base_url=None)
         mock_hackmd_instance.get_notes.assert_called_once()
         mock_hackmd_instance.filter_notes_by_folder_and_date.assert_called_once()
         mock_hackmd_instance.get_note_content.assert_called_once_with("test_note_id")

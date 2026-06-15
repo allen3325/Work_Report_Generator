@@ -49,6 +49,7 @@ def main():
             provider=args.llm_provider,
             api_key=env_vars[f"{args.llm_provider.upper()}_API_KEY"],
             model=env_vars[f"{args.llm_provider.upper()}_MODEL"],
+            base_url=env_vars.get("OPENAI_COMPATIBLE_BASE_URL"),
         )
 
         print(f"Clients initialized")
