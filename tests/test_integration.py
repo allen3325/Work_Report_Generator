@@ -42,6 +42,7 @@ def test_main_workflow_mock():
         patch("main.create_llm_client") as mock_llm_factory,
         patch("main.save_local_report") as mock_save_local,
         patch("builtins.print") as mock_print,
+        patch("main.load_dotenv") as mock_load_dotenv,
     ):
 
         # Setup mocks
@@ -79,7 +80,14 @@ def test_main_workflow_mock():
 
         # Verify calls
         mock_hackmd.assert_called_once()
-        mock_llm_factory.assert_called_once_with(provider="openai", api_key="test_openai_key", model="gpt-4", base_url=None)
+        mock_llm_factory.assert_called_once_with(
+            provider="openai",
+            api_key="test_openai_key",
+            model="gpt-4",
+            base_url=None,
+            project_id=None,
+            region="global",
+        )
         mock_hackmd_instance.get_notes.assert_called_once()
         mock_hackmd_instance.filter_notes_by_folder_and_date.assert_called_once()
         mock_hackmd_instance.get_note_content.assert_called_once_with("test_note_id")
@@ -142,6 +150,7 @@ def test_main_workflow_token_limit_exceeded():
         patch("main.HackMDClient") as mock_hackmd,
         patch("main.create_llm_client") as mock_llm_factory,
         patch("builtins.print") as mock_print,
+        patch("main.load_dotenv") as mock_load_dotenv,
     ):
 
         # Setup mocks

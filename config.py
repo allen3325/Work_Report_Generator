@@ -34,8 +34,8 @@ def parse_arguments() -> argparse.Namespace:
         "--llm-provider",
         type=str,
         required=True,
-        choices=["openai", "gemini", "claude", "openai_compatible", "ollama_cloud"],
-        help="LLM service provider (openai, gemini, claude, openai_compatible, ollama_cloud)",
+        choices=["openai", "gemini", "claude", "claude_vertex", "openai_compatible", "ollama_cloud"],
+        help="LLM service provider (openai, gemini, claude, claude_vertex, openai_compatible, ollama_cloud)",
     )
     parser.add_argument(
         "--year-tag", type=str, required=True, help="Year tag for HackMD tags"
@@ -58,20 +58,26 @@ def validate_env(llm_provider: str) -> None:
     if not os.getenv("HACKMD_API_TOKEN"):
         raise ValueError("Error: HACKMD_API_TOKEN is missing in environment variables")
 
-    # Check LLM provider specific API key
-    key_name = f"{llm_provider.upper()}_API_KEY"
-    if not os.getenv(key_name):
-        raise ValueError(f"Error: {key_name} is required for {llm_provider} provider")
+    if llm_provider == "claude_vertex":
+        if not os.getenv("CLAUDE_VERTEX_PROJECT_ID"):
+            raise ValueError("Error: CLAUDE_VERTEX_PROJECT_ID is required for claude_vertex provider")
+        if not os.getenv("CLAUDE_VERTEX_MODEL"):
+            raise ValueError("Error: CLAUDE_VERTEX_MODEL is required for claude_vertex provider")
+    else:
+        # Check LLM provider specific API key
+        key_name = f"{llm_provider.upper()}_API_KEY"
+        if not os.getenv(key_name):
+            raise ValueError(f"Error: {key_name} is required for {llm_provider} provider")
 
-    # Check LLM provider specific model
-    model_name = f"{llm_provider.upper()}_MODEL"
-    if not os.getenv(model_name):
-        raise ValueError(f"Error: {model_name} is required for {llm_provider} provider")
+        # Check LLM provider specific model
+        model_name = f"{llm_provider.upper()}_MODEL"
+        if not os.getenv(model_name):
+            raise ValueError(f"Error: {model_name} is required for {llm_provider} provider")
 
-    # Check extra base_url for openai_compatible
-    if llm_provider == "openai_compatible":
-        if not os.getenv("OPENAI_COMPATIBLE_BASE_URL"):
-            raise ValueError("Error: OPENAI_COMPATIBLE_BASE_URL is required for openai_compatible provider")
+        # Check extra base_url for openai_compatible
+        if llm_provider == "openai_compatible":
+            if not os.getenv("OPENAI_COMPATIBLE_BASE_URL"):
+                raise ValueError("Error: OPENAI_COMPATIBLE_BASE_URL is required for openai_compatible provider")
 
 
 def get_env_vars() -> Dict[str, Any]:
@@ -95,4 +101,7 @@ def get_env_vars() -> Dict[str, Any]:
         "OPENAI_COMPATIBLE_BASE_URL": os.getenv("OPENAI_COMPATIBLE_BASE_URL"),
         "OLLAMA_CLOUD_API_KEY": os.getenv("OLLAMA_CLOUD_API_KEY"),
         "OLLAMA_CLOUD_MODEL": os.getenv("OLLAMA_CLOUD_MODEL"),
+        "CLAUDE_VERTEX_PROJECT_ID": os.getenv("CLAUDE_VERTEX_PROJECT_ID"),
+        "CLAUDE_VERTEX_REGION": os.getenv("CLAUDE_VERTEX_REGION", "global"),
+        "CLAUDE_VERTEX_MODEL": os.getenv("CLAUDE_VERTEX_MODEL"),
     }

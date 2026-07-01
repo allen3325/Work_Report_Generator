@@ -6,7 +6,7 @@ A Python CLI tool that generates annual performance reports from HackMD weekly n
 
 - ✅ Fetch weekly reports from HackMD
 - ✅ Filter by folder and date range
-- ✅ Support multiple LLM providers (OpenAI, Gemini, Claude, OpenAI-Compatible like vLLM, and Ollama Cloud)
+- ✅ Support multiple LLM providers (OpenAI, Gemini, Claude, Claude Vertex AI, OpenAI-Compatible like vLLM, and Ollama Cloud)
 - ✅ Token counting and limit checking
 - ✅ Generate structured annual performance reports
 - ✅ Save reports locally and upload to HackMD
@@ -50,7 +50,7 @@ GEMINI_MODEL=gemini-3.5-flash  # Required: e.g., gemini-3.5-flash
 
 # For Anthropic Claude
 CLAUDE_API_KEY=your_claude_key_here
-CLAUDE_MODEL=claude-sonnet-4-6  # Required: e.g., claude-sonnet-4-6, claude-opus-4-8
+CLAUDE_MODEL=claude-sonnet-5  # Required: e.g., claude-sonnet-5, claude-opus-4-8
 
 # For OpenAI Compatible (e.g., vLLM, Ollama, LiteLLM)
 OPENAI_COMPATIBLE_API_KEY=your_compatible_api_key_here  # Can be a dummy value (e.g., "empty") if not required
@@ -60,6 +60,11 @@ OPENAI_COMPATIBLE_BASE_URL=http://localhost:8000/v1     # The API base endpoint
 # For Ollama Cloud
 OLLAMA_CLOUD_API_KEY=your_ollama_cloud_api_key_here
 OLLAMA_CLOUD_MODEL=llama3:cloud  # e.g., llama3:cloud, gpt-oss:120b-cloud
+
+# For Claude Vertex AI (Anthropic on GCP Vertex AI)
+CLAUDE_VERTEX_PROJECT_ID=your_gcp_project_id_here
+CLAUDE_VERTEX_REGION=global  # Optional, defaults to global
+CLAUDE_VERTEX_MODEL=claude-sonnet-5  # Required: e.g., claude-3-5-sonnet@20240620 or claude-sonnet-5
 ```
 
 ## Usage
@@ -109,6 +114,15 @@ python main.py \
   --max-tokens 150000 \
   --llm-provider ollama_cloud \
   --year-tag 2025
+
+# Using Claude Vertex AI
+python main.py \
+  --start-date 2025-01-01 \
+  --end-date 2025-12-31 \
+  --folder-name "DRC Weekly Report" \
+  --max-tokens 150000 \
+  --llm-provider claude_vertex \
+  --year-tag 2025
 ```
 
 ## Command Line Arguments
@@ -119,7 +133,7 @@ python main.py \
 | `--end-date` | string | ✅ | End date (YYYY-MM-DD) | - |
 | `--folder-name` | string | ✅ | Target folder name in HackMD | - |
 | `--max-tokens` | integer | ✅ | Maximum token limit | - |
-| `--llm-provider` | string | ✅ | LLM service provider | `openai`, `gemini`, `claude`, `openai_compatible`, `ollama_cloud` |
+| `--llm-provider` | string | ✅ | LLM service provider | `openai`, `gemini`, `claude`, `claude_vertex`, `openai_compatible`, `ollama_cloud` |
 | `--year-tag` | string | ✅ | Year tag for HackMD | - |
 
 ## Project Structure
@@ -146,6 +160,7 @@ report_generator/
         ├── openai_client.py # OpenAI implementation
         ├── gemini_client.py # Gemini implementation
         ├── claude_client.py # Claude implementation
+        ├── claude_vertex_client.py # Claude Vertex AI implementation
         ├── openai_compatible_client.py # OpenAI-Compatible client implementation
         └── ollama_cloud_client.py # Ollama Cloud client implementation
 ```

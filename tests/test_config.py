@@ -106,6 +106,49 @@ def test_validate_env_valid():
         validate_env("openai")
 
 
+def test_validate_env_claude_vertex_missing_project_id():
+    """Test claude_vertex validation with missing project ID."""
+    with patch.dict(
+        os.environ,
+        {
+            "HACKMD_API_TOKEN": "test_token",
+            "CLAUDE_VERTEX_MODEL": "claude-sonnet-5",
+        },
+        clear=True,
+    ):
+        with pytest.raises(ValueError, match="CLAUDE_VERTEX_PROJECT_ID is required"):
+            validate_env("claude_vertex")
+
+
+def test_validate_env_claude_vertex_missing_model():
+    """Test claude_vertex validation with missing model."""
+    with patch.dict(
+        os.environ,
+        {
+            "HACKMD_API_TOKEN": "test_token",
+            "CLAUDE_VERTEX_PROJECT_ID": "test-project",
+        },
+        clear=True,
+    ):
+        with pytest.raises(ValueError, match="CLAUDE_VERTEX_MODEL is required"):
+            validate_env("claude_vertex")
+
+
+def test_validate_env_claude_vertex_valid():
+    """Test claude_vertex validation with all required variables."""
+    with patch.dict(
+        os.environ,
+        {
+            "HACKMD_API_TOKEN": "test_token",
+            "CLAUDE_VERTEX_PROJECT_ID": "test-project",
+            "CLAUDE_VERTEX_MODEL": "claude-sonnet-5",
+        },
+        clear=True,
+    ):
+        # Should not raise any exception
+        validate_env("claude_vertex")
+
+
 def test_get_env_vars():
     """Test getting environment variables."""
     with patch.dict(
@@ -118,7 +161,10 @@ def test_get_env_vars():
             "GEMINI_API_KEY": "test_gemini_key",
             "GEMINI_MODEL": "gemini-2.5-flash",
             "CLAUDE_API_KEY": "test_claude_key",
-            "CLAUDE_MODEL": "claude-sonnet-4-5",
+            "CLAUDE_MODEL": "claude-sonnet-5",
+            "CLAUDE_VERTEX_PROJECT_ID": "test-vertex-project",
+            "CLAUDE_VERTEX_REGION": "us-central1",
+            "CLAUDE_VERTEX_MODEL": "claude-sonnet-5",
         },
         clear=True,
     ):
@@ -131,7 +177,10 @@ def test_get_env_vars():
         assert env_vars["GEMINI_API_KEY"] == "test_gemini_key"
         assert env_vars["GEMINI_MODEL"] == "gemini-2.5-flash"
         assert env_vars["CLAUDE_API_KEY"] == "test_claude_key"
-        assert env_vars["CLAUDE_MODEL"] == "claude-sonnet-4-5"
+        assert env_vars["CLAUDE_MODEL"] == "claude-sonnet-5"
+        assert env_vars["CLAUDE_VERTEX_PROJECT_ID"] == "test-vertex-project"
+        assert env_vars["CLAUDE_VERTEX_REGION"] == "us-central1"
+        assert env_vars["CLAUDE_VERTEX_MODEL"] == "claude-sonnet-5"
 
 
 def test_get_env_vars_default_url():
@@ -148,3 +197,4 @@ def test_get_env_vars_default_url():
         env_vars = get_env_vars()
 
         assert env_vars["HACKMD_API_URL"] == "https://api.hackmd.io/v1"
+
