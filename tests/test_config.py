@@ -4,7 +4,7 @@ import sys
 from unittest.mock import patch
 
 sys.path.insert(0, "/home/os-chewei.chang/Projects/report_generator")
-from config import parse_arguments, validate_env, get_env_vars
+from config import DEFAULT_CLAUDE_MODEL, parse_arguments, validate_env, get_env_vars
 
 
 def test_parse_arguments():
@@ -98,7 +98,7 @@ def test_validate_env_valid():
         {
             "HACKMD_API_TOKEN": "test_token",
             "OPENAI_API_KEY": "test_openai_key",
-            "OPENAI_MODEL": "gpt-4",
+            "OPENAI_MODEL": "gpt-6-luna",
         },
         clear=True,
     ):
@@ -112,7 +112,7 @@ def test_validate_env_claude_vertex_missing_project_id():
         os.environ,
         {
             "HACKMD_API_TOKEN": "test_token",
-            "CLAUDE_VERTEX_MODEL": "claude-sonnet-5",
+            "CLAUDE_VERTEX_MODEL": "claude-haiku-5-5",
         },
         clear=True,
     ):
@@ -120,8 +120,8 @@ def test_validate_env_claude_vertex_missing_project_id():
             validate_env("claude_vertex")
 
 
-def test_validate_env_claude_vertex_missing_model():
-    """Test claude_vertex validation with missing model."""
+def test_validate_env_claude_vertex_missing_model_uses_default():
+    """Test claude_vertex falls back to the default Claude model when model is missing."""
     with patch.dict(
         os.environ,
         {
@@ -130,8 +130,39 @@ def test_validate_env_claude_vertex_missing_model():
         },
         clear=True,
     ):
-        with pytest.raises(ValueError, match="CLAUDE_VERTEX_MODEL is required"):
-            validate_env("claude_vertex")
+        # Should not raise any exception
+        validate_env("claude_vertex")
+        assert get_env_vars()["CLAUDE_VERTEX_MODEL"] == DEFAULT_CLAUDE_MODEL
+
+
+def test_validate_env_claude_missing_model_uses_default():
+    """Test claude falls back to claude-haiku-5-5 when CLAUDE_MODEL is missing."""
+    with patch.dict(
+        os.environ,
+        {
+            "HACKMD_API_TOKEN": "test_token",
+            "CLAUDE_API_KEY": "test_claude_key",
+        },
+        clear=True,
+    ):
+        # Should not raise any exception
+        validate_env("claude")
+        assert get_env_vars()["CLAUDE_MODEL"] == "claude-haiku-5-5"
+
+
+def test_parse_arguments_default_provider():
+    """Test that --llm-provider defaults to claude."""
+    test_args = [
+        "--start-date", "2024-01-01",
+        "--end-date", "2024-12-31",
+        "--folder-name", "Test Folder",
+        "--max-tokens", "100000",
+        "--year-tag", "2024",
+    ]
+
+    with patch("sys.argv", ["generate_report.py"] + test_args):
+        args = parse_arguments()
+        assert args.llm_provider == "claude"
 
 
 def test_validate_env_claude_vertex_valid():
@@ -141,7 +172,7 @@ def test_validate_env_claude_vertex_valid():
         {
             "HACKMD_API_TOKEN": "test_token",
             "CLAUDE_VERTEX_PROJECT_ID": "test-project",
-            "CLAUDE_VERTEX_MODEL": "claude-sonnet-5",
+            "CLAUDE_VERTEX_MODEL": "claude-haiku-5-5",
         },
         clear=True,
     ):
@@ -157,14 +188,14 @@ def test_get_env_vars():
             "HACKMD_API_TOKEN": "test_token",
             "HACKMD_API_URL": "https://test.api.hackmd.io/v1",
             "OPENAI_API_KEY": "test_openai_key",
-            "OPENAI_MODEL": "gpt-4",
+            "OPENAI_MODEL": "gpt-6-luna",
             "GEMINI_API_KEY": "test_gemini_key",
-            "GEMINI_MODEL": "gemini-2.5-flash",
+            "GEMINI_MODEL": "gemini-3.8-flash",
             "CLAUDE_API_KEY": "test_claude_key",
-            "CLAUDE_MODEL": "claude-sonnet-5",
+            "CLAUDE_MODEL": "claude-haiku-5-5",
             "CLAUDE_VERTEX_PROJECT_ID": "test-vertex-project",
             "CLAUDE_VERTEX_REGION": "us-central1",
-            "CLAUDE_VERTEX_MODEL": "claude-sonnet-5",
+            "CLAUDE_VERTEX_MODEL": "claude-haiku-5-5",
         },
         clear=True,
     ):
@@ -173,14 +204,14 @@ def test_get_env_vars():
         assert env_vars["HACKMD_API_TOKEN"] == "test_token"
         assert env_vars["HACKMD_API_URL"] == "https://test.api.hackmd.io/v1"
         assert env_vars["OPENAI_API_KEY"] == "test_openai_key"
-        assert env_vars["OPENAI_MODEL"] == "gpt-4"
+        assert env_vars["OPENAI_MODEL"] == "gpt-6-luna"
         assert env_vars["GEMINI_API_KEY"] == "test_gemini_key"
-        assert env_vars["GEMINI_MODEL"] == "gemini-2.5-flash"
+        assert env_vars["GEMINI_MODEL"] == "gemini-3.8-flash"
         assert env_vars["CLAUDE_API_KEY"] == "test_claude_key"
-        assert env_vars["CLAUDE_MODEL"] == "claude-sonnet-5"
+        assert env_vars["CLAUDE_MODEL"] == "claude-haiku-5-5"
         assert env_vars["CLAUDE_VERTEX_PROJECT_ID"] == "test-vertex-project"
         assert env_vars["CLAUDE_VERTEX_REGION"] == "us-central1"
-        assert env_vars["CLAUDE_VERTEX_MODEL"] == "claude-sonnet-5"
+        assert env_vars["CLAUDE_VERTEX_MODEL"] == "claude-haiku-5-5"
 
 
 def test_get_env_vars_default_url():
@@ -190,7 +221,7 @@ def test_get_env_vars_default_url():
         {
             "HACKMD_API_TOKEN": "test_token",
             "OPENAI_API_KEY": "test_openai_key",
-            "OPENAI_MODEL": "gpt-4",
+            "OPENAI_MODEL": "gpt-6-luna",
         },
         clear=True,
     ):
