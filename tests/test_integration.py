@@ -15,7 +15,7 @@ def test_main_workflow_mock():
     test_env = {
         "HACKMD_API_TOKEN": "test_token",
         "OPENAI_API_KEY": "test_openai_key",
-        "OPENAI_MODEL": "gpt-4",
+        "OPENAI_MODEL": "gpt-6-luna",
         "HACKMD_API_URL": "https://api.hackmd.io/v1",
     }
 
@@ -51,7 +51,7 @@ def test_main_workflow_mock():
 
         mock_llm_instance = MagicMock()
         mock_llm_instance.get_provider_name.return_value = "openai"
-        mock_llm_instance.get_model_name.return_value = "gpt-4"
+        mock_llm_instance.get_model_name.return_value = "gpt-6-luna"
         mock_llm_instance.count_tokens.return_value = 100
         mock_llm_instance.generate.return_value = "# Test Report Content"
         mock_llm_factory.return_value = mock_llm_instance
@@ -83,7 +83,7 @@ def test_main_workflow_mock():
         mock_llm_factory.assert_called_once_with(
             provider="openai",
             api_key="test_openai_key",
-            model="gpt-4",
+            model="gpt-6-luna",
             base_url=None,
             project_id=None,
             region="global",
@@ -124,7 +124,7 @@ def test_main_workflow_token_limit_exceeded():
     test_env = {
         "HACKMD_API_TOKEN": "test_token",
         "OPENAI_API_KEY": "test_openai_key",
-        "OPENAI_MODEL": "gpt-4",
+        "OPENAI_MODEL": "gpt-6-luna",
         "HACKMD_API_URL": "https://api.hackmd.io/v1",
     }
 

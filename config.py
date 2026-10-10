@@ -2,6 +2,12 @@ import argparse
 import os
 from typing import Dict, Any
 
+# Default Claude model used when CLAUDE_MODEL / CLAUDE_VERTEX_MODEL is not set
+DEFAULT_CLAUDE_MODEL = "claude-haiku-5-5"
+
+# Providers whose model falls back to DEFAULT_CLAUDE_MODEL when not configured
+PROVIDERS_WITH_DEFAULT_MODEL = {"claude", "claude_vertex"}
+
 
 def parse_arguments() -> argparse.Namespace:
     """
@@ -33,9 +39,9 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--llm-provider",
         type=str,
-        required=True,
+        default="claude",
         choices=["openai", "gemini", "claude", "claude_vertex", "openai_compatible", "ollama_cloud"],
-        help="LLM service provider (openai, gemini, claude, claude_vertex, openai_compatible, ollama_cloud)",
+        help="LLM service provider (openai, gemini, claude, claude_vertex, openai_compatible, ollama_cloud). Defaults to claude",
     )
     parser.add_argument(
         "--year-tag", type=str, required=True, help="Year tag for HackMD tags"
@@ -61,17 +67,15 @@ def validate_env(llm_provider: str) -> None:
     if llm_provider == "claude_vertex":
         if not os.getenv("CLAUDE_VERTEX_PROJECT_ID"):
             raise ValueError("Error: CLAUDE_VERTEX_PROJECT_ID is required for claude_vertex provider")
-        if not os.getenv("CLAUDE_VERTEX_MODEL"):
-            raise ValueError("Error: CLAUDE_VERTEX_MODEL is required for claude_vertex provider")
     else:
         # Check LLM provider specific API key
         key_name = f"{llm_provider.upper()}_API_KEY"
         if not os.getenv(key_name):
             raise ValueError(f"Error: {key_name} is required for {llm_provider} provider")
 
-        # Check LLM provider specific model
+        # Check LLM provider specific model (Claude falls back to DEFAULT_CLAUDE_MODEL)
         model_name = f"{llm_provider.upper()}_MODEL"
-        if not os.getenv(model_name):
+        if llm_provider not in PROVIDERS_WITH_DEFAULT_MODEL and not os.getenv(model_name):
             raise ValueError(f"Error: {model_name} is required for {llm_provider} provider")
 
         # Check extra base_url for openai_compatible
@@ -95,7 +99,7 @@ def get_env_vars() -> Dict[str, Any]:
         "GEMINI_API_KEY": os.getenv("GEMINI_API_KEY"),
         "GEMINI_MODEL": os.getenv("GEMINI_MODEL"),
         "CLAUDE_API_KEY": os.getenv("CLAUDE_API_KEY"),
-        "CLAUDE_MODEL": os.getenv("CLAUDE_MODEL"),
+        "CLAUDE_MODEL": os.getenv("CLAUDE_MODEL") or DEFAULT_CLAUDE_MODEL,
         "OPENAI_COMPATIBLE_API_KEY": os.getenv("OPENAI_COMPATIBLE_API_KEY"),
         "OPENAI_COMPATIBLE_MODEL": os.getenv("OPENAI_COMPATIBLE_MODEL"),
         "OPENAI_COMPATIBLE_BASE_URL": os.getenv("OPENAI_COMPATIBLE_BASE_URL"),
@@ -103,5 +107,5 @@ def get_env_vars() -> Dict[str, Any]:
         "OLLAMA_CLOUD_MODEL": os.getenv("OLLAMA_CLOUD_MODEL"),
         "CLAUDE_VERTEX_PROJECT_ID": os.getenv("CLAUDE_VERTEX_PROJECT_ID"),
         "CLAUDE_VERTEX_REGION": os.getenv("CLAUDE_VERTEX_REGION", "global"),
-        "CLAUDE_VERTEX_MODEL": os.getenv("CLAUDE_VERTEX_MODEL"),
+        "CLAUDE_VERTEX_MODEL": os.getenv("CLAUDE_VERTEX_MODEL") or DEFAULT_CLAUDE_MODEL,
     }

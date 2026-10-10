@@ -26,7 +26,7 @@ def test_simple_workflow():
     test_env = {
         "HACKMD_API_TOKEN": "test_token",
         "OPENAI_API_KEY": "test_openai_key",
-        "OPENAI_MODEL": "gpt-4",
+        "OPENAI_MODEL": "gpt-6-luna",
         "HACKMD_API_URL": "https://api.hackmd.io/v1",
     }
 
@@ -85,7 +85,7 @@ def test_simple_workflow():
             ) as mock_llm_factory:
                 mock_llm_instance = MagicMock()
                 mock_llm_instance.get_provider_name.return_value = "openai"
-                mock_llm_instance.get_model_name.return_value = "gpt-4"
+                mock_llm_instance.get_model_name.return_value = "gpt-6-luna"
                 mock_llm_instance.count_tokens.return_value = 50  # Well under limit
                 mock_llm_instance.generate.return_value = """
 # 一、年度重點成就摘要

@@ -10,13 +10,13 @@ def test_claude_vertex_client_initialization():
         client = ClaudeVertexClient(
             project_id="test-project",
             region="global",
-            model="claude-sonnet-5"
+            model="claude-haiku-5-5"
         )
         assert client.project_id == "test-project"
         assert client.region == "global"
-        assert client.model == "claude-sonnet-5"
+        assert client.model == "claude-haiku-5-5"
         assert client.get_provider_name() == "claude_vertex"
-        assert client.get_model_name() == "claude-sonnet-5"
+        assert client.get_model_name() == "claude-haiku-5-5"
         mock_vertex_class.assert_called_once_with(region="global", project_id="test-project")
 
 
@@ -39,14 +39,14 @@ def test_claude_vertex_client_generate():
         client = ClaudeVertexClient(
             project_id="test-project",
             region="global",
-            model="claude-sonnet-5"
+            model="claude-haiku-5-5"
         )
 
         result = client.generate("Hello Claude Vertex")
 
         assert result == "Hello! I am Claude Vertex."
         mock_messages.create.assert_called_once_with(
-            model="claude-sonnet-5",
+            model="claude-haiku-5-5",
             messages=[{"role": "user", "content": "Hello Claude Vertex"}],
             thinking={"type": "adaptive"},
             output_config={"effort": "low"},
@@ -70,14 +70,14 @@ def test_claude_vertex_client_count_tokens():
         client = ClaudeVertexClient(
             project_id="test-project",
             region="global",
-            model="claude-sonnet-5"
+            model="claude-haiku-5-5"
         )
 
         # 1. Test when API method count_tokens is available and works
         tokens = client.count_tokens("Hello world")
         assert tokens == 5
         mock_messages.count_tokens.assert_called_once_with(
-            model="claude-sonnet-5",
+            model="claude-haiku-5-5",
             messages=[{"role": "user", "content": "Hello world"}],
         )
 
@@ -94,9 +94,9 @@ def test_factory_create_claude_vertex():
             provider="claude_vertex",
             project_id="test-project-factory",
             region="us-central1",
-            model="claude-sonnet-5"
+            model="claude-haiku-5-5"
         )
         assert isinstance(client, ClaudeVertexClient)
         assert client.project_id == "test-project-factory"
         assert client.region == "us-central1"
-        assert client.model == "claude-sonnet-5"
+        assert client.model == "claude-haiku-5-5"

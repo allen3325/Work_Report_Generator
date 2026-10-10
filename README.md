@@ -42,15 +42,15 @@ HACKMD_API_URL=https://api.hackmd.io/v1  # Optional, defaults to this
 
 # For OpenAI
 OPENAI_API_KEY=your_openai_key_here
-OPENAI_MODEL=gpt-5.4-mini  # Required: e.g., gpt-5.4-mini, gpt-5.5
+OPENAI_MODEL=gpt-6-luna  # Required: e.g., gpt-6-luna, gpt-6.1-sol, gpt-6-astra
 
 # For Google Gemini
 GEMINI_API_KEY=your_gemini_key_here
-GEMINI_MODEL=gemini-3.5-flash  # Required: e.g., gemini-3.5-flash
+GEMINI_MODEL=gemini-3.8-flash  # Required: e.g., gemini-3.8-flash, gemini-3.1-pro-preview
 
 # For Anthropic Claude
 CLAUDE_API_KEY=your_claude_key_here
-CLAUDE_MODEL=claude-sonnet-5  # Required: e.g., claude-sonnet-5, claude-opus-4-8
+CLAUDE_MODEL=claude-haiku-5-5  # Optional (defaults to claude-haiku-5-5): e.g., claude-haiku-5-5, claude-sonnet-5-5, claude-opus-5-5
 
 # For OpenAI Compatible (e.g., vLLM, Ollama, LiteLLM)
 OPENAI_COMPATIBLE_API_KEY=your_compatible_api_key_here  # Can be a dummy value (e.g., "empty") if not required
@@ -64,7 +64,7 @@ OLLAMA_CLOUD_MODEL=llama3:cloud  # e.g., llama3:cloud, gpt-oss:120b-cloud
 # For Claude Vertex AI (Anthropic on GCP Vertex AI)
 CLAUDE_VERTEX_PROJECT_ID=your_gcp_project_id_here
 CLAUDE_VERTEX_REGION=global  # Optional, defaults to global
-CLAUDE_VERTEX_MODEL=claude-sonnet-5  # Required: e.g., claude-3-5-sonnet@20240620 or claude-sonnet-5
+CLAUDE_VERTEX_MODEL=claude-haiku-5-5  # Optional (defaults to claude-haiku-5-5): e.g., claude-haiku-5-5, claude-sonnet-5-5, claude-opus-5-5
 ```
 
 ## Usage
@@ -88,7 +88,7 @@ python main.py \
   --llm-provider gemini \
   --year-tag 2025
 
-# Using Anthropic Claude
+# Using Anthropic Claude (default provider; model defaults to claude-haiku-5-5)
 python main.py \
   --start-date 2025-01-01 \
   --end-date 2025-12-31 \
@@ -133,7 +133,7 @@ python main.py \
 | `--end-date` | string | ✅ | End date (YYYY-MM-DD) | - |
 | `--folder-name` | string | ✅ | Target folder name in HackMD | - |
 | `--max-tokens` | integer | ✅ | Maximum token limit | - |
-| `--llm-provider` | string | ✅ | LLM service provider | `openai`, `gemini`, `claude`, `claude_vertex`, `openai_compatible`, `ollama_cloud` |
+| `--llm-provider` | string | ❌ (default: `claude`) | LLM service provider | `openai`, `gemini`, `claude`, `claude_vertex`, `openai_compatible`, `ollama_cloud` |
 | `--year-tag` | string | ✅ | Year tag for HackMD | - |
 
 ## Agent Skills (智慧 Agent 技能)
